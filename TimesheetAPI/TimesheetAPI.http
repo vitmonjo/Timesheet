@@ -1,0 +1,6 @@
+@TimesheetAPI_HostAddress = http://localhost:5231
+
+GET {{TimesheetAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

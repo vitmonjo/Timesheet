@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +8,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register DbContext with InMemoryDatabase
+// 🔹 Configure SQL Server Connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("TimesheetDB"));
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 

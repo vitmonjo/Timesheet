@@ -5,6 +5,8 @@
 
     public class UserClient
     {
+        public int Id { get; set; }
+
         [Key]
         [Column(Order = 1)]
         public int UserId { get; set; }
@@ -17,6 +19,4 @@
         public User User { get; set; }
         public Client Client { get; set; }
     }
-
-
 }

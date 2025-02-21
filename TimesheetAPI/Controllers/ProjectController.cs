@@ -18,18 +18,19 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] Project Project)
+        public async Task<IActionResult> CreateProject([FromBody] Project project)
         {
-            if (Project == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Project data is required.");
+                return BadRequest(ModelState);
             }
 
-            _context.Projects.Add(Project);
+            _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProjectById), new { id = Project.Id }, Project);
+            return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, project);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectById(int id)

@@ -14,26 +14,5 @@
         public DbSet<TimesheetEntry> TimesheetEntries { get; set; }
         public DbSet<UserClient> UserClients { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Define composite primary key for UserClient
-            modelBuilder.Entity<UserClient>()
-                .HasKey(uc => new { uc.UserId, uc.ClientId });
-
-            // Define relationships
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.Client)
-                .WithMany(c => c.Projects)
-                .HasForeignKey(p => p.ClientId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Task>()
-                .HasOne(p => p.Project)
-                .WithMany(c => c.Tasks)
-                .HasForeignKey(p => p.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }

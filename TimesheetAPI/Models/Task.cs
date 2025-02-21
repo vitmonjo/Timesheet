@@ -7,7 +7,7 @@
         public int ProjectId { get; set; }  // Foreign Key
 
         // Navigation properties
-        public Project Project { get; set; } = null!;
+        public Project? Project { get; set; } = null!;
         public List<TimesheetEntry> TimesheetEntries { get; set; } = new();
     }
 

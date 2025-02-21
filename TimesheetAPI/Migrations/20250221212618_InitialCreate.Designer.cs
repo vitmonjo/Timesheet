@@ -12,8 +12,8 @@ using TimesheetAPI.Data;
 namespace TimesheetAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250221001508_FixTaskCompositeKey")]
-    partial class FixTaskCompositeKey
+    [Migration("20250221212618_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,8 +59,6 @@ namespace TimesheetAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.ToTable("Projects");
                 });
 
@@ -80,8 +78,6 @@ namespace TimesheetAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Tasks");
                 });
@@ -112,10 +108,6 @@ namespace TimesheetAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TaskId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("TimesheetEntries");
                 });
 
@@ -142,104 +134,21 @@ namespace TimesheetAPI.Migrations
 
             modelBuilder.Entity("TimesheetAPI.Models.UserClient", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "ClientId");
-
-                    b.HasIndex("ClientId");
+                    b.HasKey("Id");
 
                     b.ToTable("UserClients");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.Project", b =>
-                {
-                    b.HasOne("TimesheetAPI.Models.Client", "Client")
-                        .WithMany("Projects")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.Task", b =>
-                {
-                    b.HasOne("TimesheetAPI.Models.Project", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.TimesheetEntry", b =>
-                {
-                    b.HasOne("TimesheetAPI.Models.Task", "Task")
-                        .WithMany("TimesheetEntries")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TimesheetAPI.Models.User", "User")
-                        .WithMany("TimesheetEntries")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.UserClient", b =>
-                {
-                    b.HasOne("TimesheetAPI.Models.Client", "Client")
-                        .WithMany("UserClients")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TimesheetAPI.Models.User", "User")
-                        .WithMany("UserClients")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.Client", b =>
-                {
-                    b.Navigation("Projects");
-
-                    b.Navigation("UserClients");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.Project", b =>
-                {
-                    b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.Task", b =>
-                {
-                    b.Navigation("TimesheetEntries");
-                });
-
-            modelBuilder.Entity("TimesheetAPI.Models.User", b =>
-                {
-                    b.Navigation("TimesheetEntries");
-
-                    b.Navigation("UserClients");
                 });
 #pragma warning restore 612, 618
         }

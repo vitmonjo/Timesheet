@@ -8,10 +8,6 @@
         public DateTime Date { get; set; }  // Work date
         public decimal HoursWorked { get; set; }  // Hours worked
         public string Description { get; set; } = string.Empty;  // Optional notes
-
-        // Navigation properties
-        public User User { get; set; } = null!;
-        public Task Task { get; set; } = null!;
     }
 
 }

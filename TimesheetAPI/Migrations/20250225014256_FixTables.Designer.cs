@@ -12,8 +12,8 @@ using TimesheetAPI.Data;
 namespace TimesheetAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250221212618_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250225014256_FixTables")]
+    partial class FixTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

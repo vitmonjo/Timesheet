@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 using TimesheetAPI.Models;
 using System.Threading.Tasks;
+using TimesheetAPI.DTOs;
 
 namespace TimesheetAPI.Controllers
 {
@@ -18,17 +19,28 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateClient([FromBody] Client client)
+        public async Task<IActionResult> CreateClient([FromBody] ClientDTO clientDTO)
         {
-            if (client == null)
+
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Client data is required.");
+                return BadRequest(ModelState);
             }
+
+            var client = new Client
+            {
+                Name = clientDTO.Name
+            };
 
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetClientById), new { id = client.Id }, client);
+            var createdClientDTO = new ClientDTO
+            {
+                Name = client.Name
+            };
+
+            return CreatedAtAction(nameof(GetClientById), new { id = client.Id }, clientDTO);
         }
 
         [HttpGet("{id}")]
@@ -39,7 +51,11 @@ namespace TimesheetAPI.Controllers
             {
                 return NotFound(new { message = $"Client with ID {id} not found." });
             }
-            return Ok(Client);
+            var clientDTO = new ClientDTO
+            {
+                Name = Client.Name
+            };
+            return Ok(clientDTO);
         }
 
         [HttpDelete("{id}")]
@@ -56,7 +72,7 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateClient(int id, [FromBody] Client updatedClient)
+        public async Task<IActionResult> UpdateClient(int id, [FromBody] ProjectDTO updatedClientDTO)
         {
             var Client = await _context.Clients.FindAsync(id);
 
@@ -65,8 +81,7 @@ namespace TimesheetAPI.Controllers
                 return NotFound(new { message = $"Client with ID {id} not found." });
             }
 
-            // Update Client properties
-            Client.Name = updatedClient.Name;
+            Client.Name = updatedClientDTO.Name;
 
             _context.Clients.Update(Client);
             await _context.SaveChangesAsync();

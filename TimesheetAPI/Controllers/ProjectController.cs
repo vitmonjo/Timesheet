@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 using TimesheetAPI.Models;
 using System.Threading.Tasks;
+using TimesheetAPI.DTOs;
 
 namespace TimesheetAPI.Controllers
 {
@@ -18,29 +19,45 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] Project project)
+        public async Task<IActionResult> CreateProject([FromBody] ProjectDTO projectDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var project = new Project
+            {
+                Name = projectDTO.Name,
+                ClientId = projectDTO.ClientId
+            };
+
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, project);
-        }
+            var createdProjectDTO = new ProjectDTO
+            {
+                Id = project.Id,
+                Name = project.Name
+            };
 
+            return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, createdProjectDTO);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectById(int id)
         {
-            var Project = await _context.Projects.FindAsync(id);
-            if (Project == null)
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
             {
                 return NotFound(new { message = $"Project with ID {id} not found." });
             }
-            return Ok(Project);
+            var projectDTO = new ProjectDTO
+            {
+                Id = project.Id,
+                Name = project.Name
+            };
+            return Ok(projectDTO);
         }
 
         [HttpDelete("{id}")]
@@ -57,24 +74,24 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, [FromBody] Project updatedProject)
+        public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectDTO updatedProjectDTO)
         {
-            var Project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects.FindAsync(id);
 
-            if (Project == null)
+            if (project == null)
             {
                 return NotFound(new { message = $"Project with ID {id} not found." });
             }
 
-            // Update Project properties
-            Project.Name = updatedProject.Name;
-            Project.ClientId = updatedProject.ClientId;
+            project.Name = updatedProjectDTO.Name;
+            project.ClientId = updatedProjectDTO.ClientId;
 
-            _context.Projects.Update(Project);
+            _context.Projects.Update(project);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = $"Project with ID {id} was successfully updated." });
         }
+
 
     }
 }

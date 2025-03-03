@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 using TimesheetAPI.Models;
 using System.Threading.Tasks;
+using TimesheetAPI.DTOs;
 
 namespace TimesheetAPI.Controllers
 {
@@ -18,17 +19,26 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTimesheetEntry([FromBody] TimesheetEntry TimesheetEntry)
+        public async Task<IActionResult> CreateTimesheetEntry([FromBody] TimesheetEntryDTO TimesheetEntryDTO)
         {
-            if (TimesheetEntry == null)
+            if (TimesheetEntryDTO == null)
             {
                 return BadRequest("TimesheetEntry data is required.");
             }
 
+            var TimesheetEntry = new TimesheetEntry
+            {
+                UserId = TimesheetEntryDTO.UserId,
+                TaskId = TimesheetEntryDTO.TaskId,
+                Date = TimesheetEntryDTO.Date,
+                HoursWorked = TimesheetEntryDTO.HoursWorked,
+                Description = TimesheetEntryDTO.Description
+            };
+
             _context.TimesheetEntries.Add(TimesheetEntry);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTimesheetEntryById), new { id = TimesheetEntry.Id }, TimesheetEntry);
+            return CreatedAtAction(nameof(GetTimesheetEntryById), new { id = TimesheetEntry.Id }, TimesheetEntryDTO);
         }
 
         [HttpGet("{id}")]
@@ -39,7 +49,18 @@ namespace TimesheetAPI.Controllers
             {
                 return NotFound(new { message = $"TimesheetEntry with ID {id} not found." });
             }
-            return Ok(TimesheetEntry);
+
+            var TimesheetEntryDTO = new TimesheetEntryDTO
+            {
+                Id = TimesheetEntry.Id,
+                UserId = TimesheetEntry.UserId,
+                TaskId = TimesheetEntry.TaskId,
+                Date = TimesheetEntry.Date,
+                HoursWorked = TimesheetEntry.HoursWorked,
+                Description = TimesheetEntry.Description
+            };
+
+            return Ok(TimesheetEntryDTO);
         }
 
         [HttpDelete("{id}")]
@@ -56,7 +77,7 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimesheetEntry(int id, [FromBody] TimesheetEntry updatedTimesheetEntry)
+        public async Task<IActionResult> UpdateTimesheetEntry(int id, [FromBody] TimesheetEntryDTO updatedTimesheetEntryDTO)
         {
             var TimesheetEntry = await _context.TimesheetEntries.FindAsync(id);
 
@@ -66,15 +87,16 @@ namespace TimesheetAPI.Controllers
             }
 
             // Update TimesheetEntry properties
-            TimesheetEntry.Date = updatedTimesheetEntry.Date;
-            TimesheetEntry.HoursWorked = updatedTimesheetEntry.HoursWorked;
-            TimesheetEntry.Description = updatedTimesheetEntry.Description;
+            TimesheetEntry.Date = updatedTimesheetEntryDTO.Date;
+            TimesheetEntry.HoursWorked = updatedTimesheetEntryDTO.HoursWorked;
+            TimesheetEntry.Description = updatedTimesheetEntryDTO.Description;
 
             _context.TimesheetEntries.Update(TimesheetEntry);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = $"TimesheetEntry with ID {id} was successfully updated." });
         }
+
 
     }
 }

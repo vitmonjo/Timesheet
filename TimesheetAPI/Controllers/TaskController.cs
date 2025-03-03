@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 using TimesheetAPI.Models;
 using System.Threading.Tasks;
+using TimesheetAPI.DTOs;
 
 namespace TimesheetAPI.Controllers
 {
@@ -18,62 +19,82 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] Models.Task Task)
+        public async Task<IActionResult> CreateTask([FromBody] TaskDTO taskDTO)
         {
-            if (Task == null)
+            if (taskDTO == null)
             {
                 return BadRequest("Task data is required.");
             }
 
-            _context.Tasks.Add(Task);
+            var task = new Models.Task
+            {
+                Name = taskDTO.Name,
+                ProjectId = taskDTO.ProjectId
+            };
+
+            _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTaskById), new { id = Task.Id }, Task);
+            var createdTaskDTO = new TaskDTO
+            {
+                Id = task.Id,
+                Name = task.Name,
+                ProjectId = task.ProjectId
+            };
+
+            return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, createdTaskDTO);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTaskById(int id)
         {
-            var Task = await _context.Tasks.FindAsync(id);
-            if (Task == null)
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
             {
                 return NotFound(new { message = $"Task with ID {id} not found." });
             }
-            return Ok(Task);
+            var taskDTO = new TaskDTO
+            {
+                Id = task.Id,
+                Name = task.Name,
+                ProjectId = task.ProjectId
+            };
+            return Ok(taskDTO);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            var Task = await _context.Tasks.FindAsync(id);
-            if (Task == null)
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
             {
                 return NotFound(new { message = $"Task with ID {id} not found." });
             }
-            _context.Tasks.Remove(Task);
+            _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Task with ID {id} was successfully deleted." });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] Models.Task updatedTask)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskDTO updatedTaskDTO)
         {
-            var Task = await _context.Tasks.FindAsync(id);
+            var task = await _context.Tasks.FindAsync(id);
 
-            if (Task == null)
+            if (task == null)
             {
                 return NotFound(new { message = $"Task with ID {id} not found." });
             }
 
             // Update Task properties
-            Task.Name = updatedTask.Name;
-            Task.ProjectId = updatedTask.ProjectId;
+            task.Name = updatedTaskDTO.Name;
+            task.ProjectId = updatedTaskDTO.ProjectId;
 
-            _context.Tasks.Update(Task);
+            _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = $"Task with ID {id} was successfully updated." });
         }
+
 
     }
 }

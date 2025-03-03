@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 using TimesheetAPI.Models;
 using System.Threading.Tasks;
+using TimesheetAPI.DTOs;
 
 namespace TimesheetAPI.Controllers
 {
@@ -18,17 +19,23 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] UserDTO userDTO)
         {
-            if (user == null)
+            if (userDTO == null)
             {
                 return BadRequest("User data is required.");
             }
 
+            var user = new User
+            {
+                Email = userDTO.Email,
+                Name = userDTO.Name
+            };
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, userDTO);
         }
 
         [HttpGet("{id}")]
@@ -39,7 +46,15 @@ namespace TimesheetAPI.Controllers
             {
                 return NotFound(new { message = $"User with ID {id} not found." });
             }
-            return Ok(user);
+
+            var userDTO = new UserDTO
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name
+            };
+
+            return Ok(userDTO);
         }
 
         [HttpDelete("{id}")]
@@ -56,7 +71,7 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User updatedUser)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDTO updatedUserDTO)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -66,8 +81,8 @@ namespace TimesheetAPI.Controllers
             }
 
             // Update user properties
-            user.Email = updatedUser.Email;
-            user.Name = updatedUser.Name;
+            user.Email = updatedUserDTO.Email;
+            user.Name = updatedUserDTO.Name;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

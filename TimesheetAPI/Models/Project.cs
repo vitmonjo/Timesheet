@@ -9,5 +9,4 @@
         public int ClientId { get; set; }  // Foreign Key
     }
 
-
 }

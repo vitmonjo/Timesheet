@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -35,3 +36,4 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+public partial class Program { }

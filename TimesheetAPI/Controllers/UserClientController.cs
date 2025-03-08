@@ -33,10 +33,19 @@ namespace TimesheetAPI.Controllers
             };
 
             _context.UserClients.Add(UserClient);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // 🔥 Now UserClient.Id is generated
 
-            return CreatedAtAction(nameof(GetUserClientById), new { id = UserClient.Id }, UserClientDTO);
+            // ✅ Return the actual saved entity with the correct ID
+            var createdUserClientDTO = new UserClientDTO
+            {
+                Id = UserClient.Id, // 🔥 This ensures the ID is set correctly
+                UserId = UserClient.UserId,
+                ClientId = UserClient.ClientId
+            };
+
+            return CreatedAtAction(nameof(GetUserClientById), new { id = createdUserClientDTO.Id }, createdUserClientDTO);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserClientById(int id)

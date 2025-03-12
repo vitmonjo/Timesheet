@@ -38,7 +38,18 @@ namespace TimesheetAPI.Controllers
             _context.TimesheetEntries.Add(TimesheetEntry);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTimesheetEntryById), new { id = TimesheetEntry.Id }, TimesheetEntryDTO);
+            // ✅ Return the actual saved entity with the correct ID
+            var createdTimesheetEntryDTO = new TimesheetEntryDTO
+            {
+                Id = TimesheetEntry.Id,
+                UserId = TimesheetEntry.UserId,
+                TaskId= TimesheetEntry.TaskId,
+                Date = TimesheetEntry.Date,
+                HoursWorked = TimesheetEntry.HoursWorked,
+                Description = TimesheetEntry.Description
+            };
+
+            return CreatedAtAction(nameof(GetTimesheetEntryById), new { id = createdTimesheetEntryDTO.Id }, createdTimesheetEntryDTO);
         }
 
         [HttpGet("{id}")]

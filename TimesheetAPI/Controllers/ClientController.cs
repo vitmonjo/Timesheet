@@ -37,10 +37,11 @@ namespace TimesheetAPI.Controllers
 
             var createdClientDTO = new ClientDTO
             {
+                Id = client.Id,
                 Name = client.Name
             };
 
-            return CreatedAtAction(nameof(GetClientById), new { id = client.Id }, clientDTO);
+            return CreatedAtAction(nameof(GetClientById), new { id = client.Id }, createdClientDTO);
         }
 
         [HttpGet("{id}")]

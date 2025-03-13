@@ -35,7 +35,15 @@ namespace TimesheetAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, userDTO);
+            var createdUserDTO = new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+
+
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, createdUserDTO);
         }
 
         [HttpGet("{id}")]

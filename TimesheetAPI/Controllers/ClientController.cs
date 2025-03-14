@@ -72,7 +72,7 @@ namespace TimesheetAPI.Controllers
             return Ok(new { message = $"Client with ID {id} was successfully deleted." });
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateClient(int id, [FromBody] ProjectDTO updatedClientDTO)
         {
             var Client = await _context.Clients.FindAsync(id);

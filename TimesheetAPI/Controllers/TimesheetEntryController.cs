@@ -87,7 +87,7 @@ namespace TimesheetAPI.Controllers
             return Ok(new { message = $"TimesheetEntry with ID {id} was successfully deleted." });
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateTimesheetEntry(int id, [FromBody] TimesheetEntryDTO updatedTimesheetEntryDTO)
         {
             var TimesheetEntry = await _context.TimesheetEntries.FindAsync(id);

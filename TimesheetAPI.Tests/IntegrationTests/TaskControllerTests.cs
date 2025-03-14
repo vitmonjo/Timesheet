@@ -107,7 +107,7 @@ public class TaskTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifetim
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/api/Task/{createdTask.Id}", updatedTask);
+        var response = await _client.PatchAsJsonAsync($"/api/Task/{createdTask.Id}", updatedTask);
 
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);

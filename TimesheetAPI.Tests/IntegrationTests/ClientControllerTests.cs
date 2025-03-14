@@ -103,7 +103,7 @@ public class ClientTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifet
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/api/Client/{createdClient.Id}", updatedClient);
+        var response = await _client.PatchAsJsonAsync($"/api/Client/{createdClient.Id}", updatedClient);
 
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);

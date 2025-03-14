@@ -116,7 +116,7 @@ public class TimesheetEntryTests : IClassFixture<TestWebApplicationFactory>, IAs
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/api/TimesheetEntry/{createdTimesheetEntry.Id}", updatedTimesheetEntry);
+        var response = await _client.PatchAsJsonAsync($"/api/TimesheetEntry/{createdTimesheetEntry.Id}", updatedTimesheetEntry);
 
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);

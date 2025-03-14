@@ -107,7 +107,7 @@ public class UserTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifetim
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/api/User/{createdUser.Id}", updatedUser);
+        var response = await _client.PatchAsJsonAsync($"/api/User/{createdUser.Id}", updatedUser);
 
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);

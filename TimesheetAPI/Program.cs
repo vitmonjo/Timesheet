@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TimesheetAPI.Data;
-
+using TimesheetAPI.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<AuthService>();
 
 // 🔹 Configure SQL Server Connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

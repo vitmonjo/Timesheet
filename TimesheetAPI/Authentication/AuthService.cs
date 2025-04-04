@@ -3,7 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using TimesheetAPI.Data;
 using TimesheetAPI.DTOs;
 using TimesheetAPI.Models;
 
@@ -12,28 +14,37 @@ namespace TimesheetAPI.Authentication
     public class AuthService
     {
         private readonly Dictionary<string, User> _users = new();  // Temporary in-memory user storage
+        private readonly AppDbContext _context;
         private readonly string _jwtSecret;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration, AppDbContext context)
         {
             _jwtSecret = configuration["Jwt:Secret"]; // Load secret key from appsettings.json
+            _context = context;
         }
 
-        public AuthResponseDTO Register(RegisterDTO registerDto)
+        public async Task<AuthResponseDTO> Register(RegisterDTO registerDto)
         {
-            if (_users.ContainsKey(registerDto.Email))
+            // Check if user already exists in database
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
                 throw new Exception("User already exists");
 
             // Hash the password before storing
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
 
-            // Create and store user
-            var user = new User { Email = registerDto.Email, PasswordHash = hashedPassword };
-            _users[user.Email] = user;
+            // Create new user
+            var user = new User
+            {
+                Email = registerDto.Email,
+                PasswordHash = hashedPassword,
+            };
+
+            // Add to database
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
             // Generate JWT token for the new user
             string token = GenerateJwtToken(user);
-
             return new AuthResponseDTO { Token = token };
         }
 

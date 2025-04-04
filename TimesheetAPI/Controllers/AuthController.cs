@@ -17,11 +17,11 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterDTO registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
         {
             try
             {
-                var response = _authService.Register(registerDto);
+                var response = await _authService.Register(registerDto);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -15,7 +15,7 @@ namespace TimesheetAPI.Authentication
     {
         private readonly Dictionary<string, User> _users = new();  // Temporary in-memory user storage
         private readonly AppDbContext _context;
-        private readonly string _jwtSecret;
+        private readonly string? _jwtSecret;
 
         public AuthService(IConfiguration configuration, AppDbContext context)
         {

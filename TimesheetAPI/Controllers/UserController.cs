@@ -26,10 +26,14 @@ namespace TimesheetAPI.Controllers
                 return BadRequest("User data is required.");
             }
 
+            // Hash the password
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(userDTO.Password);
+
             var user = new User
             {
                 Email = userDTO.Email,
-                Name = userDTO.Name
+                Name = userDTO.Name,
+                PasswordHash = passwordHash
             };
 
             _context.Users.Add(user);
@@ -40,8 +44,8 @@ namespace TimesheetAPI.Controllers
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email
+                // Don't include Password in the response
             };
-
 
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, createdUserDTO);
         }

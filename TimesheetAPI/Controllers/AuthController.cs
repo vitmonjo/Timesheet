@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TimesheetAPI.Authentication;
 using TimesheetAPI.DTOs;
-using TimesheetAPI.Authentication;
 
 namespace TimesheetAPI.Controllers
 {

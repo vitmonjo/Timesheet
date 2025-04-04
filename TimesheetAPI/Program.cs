@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<AuthService>();
+builder.Services.AddScoped<AuthService>();
 
 // 🔹 Configure SQL Server Connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

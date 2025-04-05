@@ -13,7 +13,6 @@ namespace TimesheetAPI.Authentication
 {
     public class AuthService
     {
-        private readonly Dictionary<string, User> _users = new();  // Temporary in-memory user storage
         private readonly AppDbContext _context;
         private readonly string? _jwtSecret;
 
@@ -49,9 +48,13 @@ namespace TimesheetAPI.Authentication
             return new AuthResponseDTO { Token = token };
         }
 
-        public AuthResponseDTO Login(LoginDTO loginDto)
+        public async Task<AuthResponseDTO> Login(LoginDTO loginDto)
         {
-            if (!_users.TryGetValue(loginDto.Email, out var user))
+            // Find user by email in the database
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+            if (user == null)
                 throw new Exception("Invalid email or password");
 
             // Verify password
@@ -60,7 +63,6 @@ namespace TimesheetAPI.Authentication
 
             // Generate JWT token
             string token = GenerateJwtToken(user);
-
             return new AuthResponseDTO { Token = token };
         }
 

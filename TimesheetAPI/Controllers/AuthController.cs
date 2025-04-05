@@ -30,11 +30,11 @@ namespace TimesheetAPI.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
             try
             {
-                var response = _authService.Login(loginDto);
+                var response = await _authService.Login(loginDto);
                 return Ok(response);
             }
             catch (Exception ex)

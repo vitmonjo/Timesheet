@@ -35,6 +35,7 @@ namespace TimesheetAPI.Authentication
             // Create new user
             var user = new User
             {
+                Name = registerDto.Name,
                 Email = registerDto.Email,
                 PasswordHash = hashedPassword,
             };

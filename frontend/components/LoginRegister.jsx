@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../styles/LoginRegister.css';
+import { login, register } from '../services/authService';
 
 export default function LoginRegister() {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -28,14 +29,30 @@ export default function LoginRegister() {
     }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     console.log('Logging in with:', { email, password });
+    try {
+      const userData = await login({ email, password });
+      console.log('Login successful:', userData);
+      // Here you would typically:
+      // 1. Store the user data or token in local storage or context
+      // 2. Redirect to a dashboard or home page
+      // 3. Update your app's authentication state
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Here you would typically show an error message to the user
+    }
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('Registering with:', { name, email, password });
+    try {
+      const userData = await register({ name, email, password });
+      console.log('Register successful:', userData);
+    } catch (error) {
+      console.error('Register failed:', error);
+    }
   };
 
   const toggleFlip = () => {
@@ -218,6 +235,7 @@ export default function LoginRegister() {
                   type="submit"
                   className="btn btn-primary"
                   disabled={passwordHasErrors}
+                  onClick={handleRegister}
                 >
                   Register
                 </button>

@@ -50,6 +50,7 @@ export default function LoginRegister() {
     try {
       const userData = await register({ name, email, password });
       console.log('Register successful:', userData);
+      toggleFlip();
     } catch (error) {
       console.error('Register failed:', error);
     }

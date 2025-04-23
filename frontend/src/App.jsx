@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import LoginRegister from '../components/LoginRegister'
 
 function App() {

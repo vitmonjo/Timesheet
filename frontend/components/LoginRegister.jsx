@@ -35,7 +35,6 @@ export default function LoginRegister() {
     try {
       const userData = await login({ email, password });
       console.log('Login successful:', userData);
-      // Here you would typically:
       // 1. Store the user data or token in local storage or context
       localStorage.setItem('authToken', userData.token);
       // 2. Redirect to a dashboard or home page

@@ -35,13 +35,9 @@ export default function LoginRegister() {
     try {
       const userData = await login({ email, password });
       console.log('Login successful:', userData);
-      // 1. Store the user data or token in local storage or context
       localStorage.setItem('authToken', userData.token);
-      // 2. Redirect to a dashboard or home page
-      // 3. Update your app's authentication state
     } catch (error) {
       console.error('Login failed:', error);
-      // Here you would typically show an error message to the user
     }
   };
 

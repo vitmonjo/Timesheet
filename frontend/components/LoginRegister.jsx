@@ -37,7 +37,7 @@ export default function LoginRegister() {
       console.log('Login successful:', userData);
       localStorage.setItem('authToken', userData.token);
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed:', error.response?.data?.message);
     }
   };
 
@@ -48,7 +48,7 @@ export default function LoginRegister() {
       console.log('Register successful:', userData);
       toggleFlip();
     } catch (error) {
-      console.error('Register failed:', error);
+      console.error('Register failed:', error.response?.data?.message);
     }
   };
 

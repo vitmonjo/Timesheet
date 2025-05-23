@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,10 +29,13 @@ namespace TimesheetAPI.Authentication
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
                 throw new Exception("User already exists");
 
-            // Hash the password before storing
+            // Validate password strength
+            ValidatePassword(registerDto.Password);
+
+            // Hash the password
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
 
-            // Create new user
+            // Create user
             var user = new User
             {
                 Name = registerDto.Name,
@@ -39,14 +43,14 @@ namespace TimesheetAPI.Authentication
                 PasswordHash = hashedPassword,
             };
 
-            // Add to database
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate JWT token for the new user
+            // Generate JWT
             string token = GenerateJwtToken(user);
             return new AuthResponseDTO { Token = token };
         }
+
 
         public async Task<AuthResponseDTO> Login(LoginDTO loginDto)
         {
@@ -86,6 +90,17 @@ namespace TimesheetAPI.Authentication
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private static void ValidatePassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("Password is required.");
+
+            var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{10,}$");
+
+            if (!regex.IsMatch(password))
+                throw new Exception("Password must be at least 10 characters long and contain at least one uppercase letter, one number, and one special character.");
         }
     }
 }
